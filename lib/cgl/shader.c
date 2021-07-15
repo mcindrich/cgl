@@ -4,15 +4,13 @@
 #include <cgl/common.h>
 #include <GL/glew.h>
 #include <stdio.h>
-#define _CRT_SECURE_NO_WARNINGS
 
-/** shader object - only thing besides the ID for the object is the source code for the shader */
-struct cgl_shader
-{
-    unsigned int ID;        /**< object base for the shader object */
-    cgl_shader_kind_t kind; /*< kind(type) of a shader */
-    char *src;              /**< shader source code */
-};
+/**
+ * set a specific flag for a shader
+ * @param   sh      shader to use
+ * @param   flg     flag to set
+ */
+#define cgl_shader_set_flag(sh, flg) ((sh)->flags |= flg)
 
 /**
  * reads and loads the file in memory
@@ -29,25 +27,15 @@ static char *load_shader_source(const char *fpath);
 static int check_compile_status(unsigned int ID);
 
 /**
- * creates a new cgl_shader struct
- * @return  newly allocated shader object
+ * initializes the shader struct
+ * @param   sh      shader to init
  */
-struct cgl_shader *cgl_shader_new()
+void cgl_shader_init(struct cgl_shader *sh)
 {
-    struct cgl_shader *sh = NULL;
-
-    sh = (struct cgl_shader *)cgl_malloc(sizeof(struct cgl_shader));
-    if (!sh)
-    {
-        return NULL;
-    }
-
     cgl_object_init((struct cgl_object *)sh);
-
-    sh->kind = cgl_shader_kind_none;
     sh->src = NULL;
-
-    return sh;
+    sh->kind = cgl_shader_kind_none;
+    sh->flags = 0;
 }
 
 /**
@@ -74,6 +62,8 @@ int cgl_shader_load_source(struct cgl_shader *sh, cgl_shader_kind_t kind, const 
     cgl_object_set_ID((struct cgl_object *)sh, glCreateShader(kind));
     glShaderSource(cgl_object_get_ID((struct cgl_object *)sh), 1, (const char *const *)&sh->src, NULL);
 
+    cgl_shader_set_flag(sh, cgl_shader_flag_initialized);
+
     return err;
 }
 
@@ -91,6 +81,10 @@ int cgl_shader_compile(struct cgl_shader *sh)
     if (err != 0)
     {
         err = cgl_error_shader_compilation;
+    }
+    else
+    {
+        cgl_shader_set_flag(sh, cgl_shader_flag_compiled);
     }
     return err;
 }
@@ -119,7 +113,6 @@ void cgl_shader_delete(struct cgl_shader *sh)
         {
             cgl_free(sh->src);
         }
-        cgl_free(sh);
     }
 }
 
@@ -132,6 +125,7 @@ static char *load_shader_source(const char *fpath)
 {
     char *buffer = 0;
     unsigned long length = 0;
+#define _CRT_SECURE_NO_WARNINGS
     FILE *f = fopen(fpath, "rb");
 
     if (f)

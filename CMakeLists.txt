@@ -15,6 +15,9 @@ set(
     "lib/cgl/error.c"
     "lib/cgl/shader.c"
     "lib/cgl/shader_program.c"
+    "lib/cgl/vbo.c"
+    "lib/cgl/ebo.c"
+    "lib/cgl/vao.c"
 )
 
 add_library(

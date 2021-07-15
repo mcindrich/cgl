@@ -1,7 +1,10 @@
 #ifndef CGL_OBJECT_H
 #define CGL_OBJECT_H
 
-struct cgl_object;
+struct cgl_object
+{
+    unsigned int ID;
+};
 
 /**
  * initializes the object structure

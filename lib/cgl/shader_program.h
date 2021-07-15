@@ -3,13 +3,20 @@
 
 #include <cgl/shader.h>
 
-struct cgl_shader_program;
+/** shader_program object - has vertex/fragment/geometry shaders */
+struct cgl_shader_program
+{
+    struct cgl_object obj;       /**< object base for the shader_program object */
+    struct cgl_shader *v_shader; /**< vertex shader */
+    struct cgl_shader *f_shader; /**< fragment shader */
+    struct cgl_shader *g_shader; /**< geometry shader */
+};
 
 /**
- * creates a new cgl_shader_program struct
- * @return  newly allocated shader_program object
+ * initializes the shader_program struct
+ * @param   prog  program to init
  */
-struct cgl_shader_program *cgl_shader_program_new();
+void cgl_shader_program_init(struct cgl_shader_program *prog);
 
 /**
  * sets the vertex shader for a program

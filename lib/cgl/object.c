@@ -3,30 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/** represents an OpenGL object - unsigned int as an ID */
-struct cgl_object
-{
-    unsigned int ID;
-};
-
-/**
- * creates a new cgl_object struct
- * @return  newly allocated object
- */
-struct cgl_object *cgl_object_new()
-{
-    struct cgl_object *obj = NULL;
-
-    obj = (struct cgl_object *)malloc(sizeof(struct cgl_object));
-    if (!obj)
-    {
-        return NULL;
-    }
-    obj->ID = 0;
-
-    return obj;
-}
-
 /**
  * initializes the object structure
  * @param   obj     object to initialize

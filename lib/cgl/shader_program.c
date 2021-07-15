@@ -3,15 +3,6 @@
 #include <cgl/common.h>
 #include <cgl/error.h>
 
-/** shader_program object - has vertex/fragment/geometry shaders */
-struct cgl_shader_program
-{
-    unsigned int ID;             /**< object base for the shader_program object */
-    struct cgl_shader *v_shader; /**< vertex shader */
-    struct cgl_shader *f_shader; /**< fragment shader */
-    struct cgl_shader *g_shader; /**< geometry shader */
-};
-
 /**
  * check linking status for a program
  * @param   ID      program ID
@@ -20,26 +11,15 @@ struct cgl_shader_program
 static int check_link_status(unsigned int ID);
 
 /**
- * creates a new cgl_shader_program struct
- * @return  newly allocated shader_program object
+ * initializes the shader_program struct
+ * @param   prog  program to init
  */
-struct cgl_shader_program *cgl_shader_program_new()
+void cgl_shader_program_init(struct cgl_shader_program *prog)
 {
-    struct cgl_shader_program *prog = NULL;
-
-    prog = cgl_malloc(sizeof(struct cgl_shader_program));
-    if (!prog)
-    {
-        return NULL;
-    }
-
     cgl_object_init((struct cgl_object *)prog);
-
     prog->v_shader = NULL;
     prog->f_shader = NULL;
     prog->g_shader = NULL;
-
-    return prog;
 }
 
 /**
@@ -92,19 +72,19 @@ int cgl_shader_program_link(struct cgl_shader_program *prog)
 
     cgl_object_set_ID((struct cgl_object *)prog, glCreateProgram());
 
-    if (prog->v_shader)
+    if (prog->v_shader && cgl_shader_check_flag(prog->v_shader, cgl_shader_flag_compiled))
     {
         glAttachShader(cgl_object_get_ID((struct cgl_object *)prog),
                        cgl_object_get_ID((struct cgl_object *)(prog->v_shader)));
     }
 
-    if (prog->f_shader)
+    if (prog->f_shader && cgl_shader_check_flag(prog->f_shader, cgl_shader_flag_compiled))
     {
         glAttachShader(cgl_object_get_ID((struct cgl_object *)prog),
                        cgl_object_get_ID((struct cgl_object *)(prog->f_shader)));
     }
 
-    if (prog->g_shader)
+    if (prog->g_shader && cgl_shader_check_flag(prog->g_shader, cgl_shader_flag_compiled))
     {
         glAttachShader(cgl_object_get_ID((struct cgl_object *)prog),
                        cgl_object_get_ID((struct cgl_object *)(prog->g_shader)));
@@ -128,11 +108,6 @@ int cgl_shader_program_link(struct cgl_shader_program *prog)
  */
 void cgl_shader_program_delete(struct cgl_shader_program *prog)
 {
-    if (prog)
-    {
-        // do not delete shaders -> they need to be deleted manually
-        cgl_free(prog);
-    }
 }
 
 /**
