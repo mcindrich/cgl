@@ -103,6 +103,17 @@ int cgl_shader_program_link(struct cgl_shader_program *prog)
 }
 
 /**
+ * writes the link info inside of a given buffer
+ * @param   prog    shader program to use
+ * @param   buffer  buffer to use
+ * @param   max     max chars in a buffer
+ */
+void cgl_shader_program_link_info(struct cgl_shader_program *prog, char *buffer, size_t max)
+{
+    glGetProgramInfoLog(cgl_object_get_ID((struct cgl_object *)prog), max, NULL, buffer);
+}
+
+/**
  * frees the given cgl_shader_program
  * @param   sh     shader_program to free
  */
