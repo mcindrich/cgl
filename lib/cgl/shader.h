@@ -2,15 +2,14 @@
 #define CGL_SHADER_H
 
 #include <cgl/object.h>
-#include <GL/glew.h>
 #include <cgl/types.h>
 
 enum cgl_shader_kind_e
 {
     cgl_shader_kind_none = 0,
-    cgl_shader_kind_vertex = GL_VERTEX_SHADER,
-    cgl_shader_kind_fragment = GL_FRAGMENT_SHADER,
-    cgl_shader_kind_geometry = GL_GEOMETRY_SHADER,
+    cgl_shader_kind_vertex = 0x8B31,
+    cgl_shader_kind_fragment = 0x8B30,
+    cgl_shader_kind_geometry = 0x8DD9,
 };
 typedef enum cgl_shader_kind_e cgl_shader_kind_t;
 

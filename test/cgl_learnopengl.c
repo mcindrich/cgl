@@ -1,4 +1,7 @@
 
+#include "cgl/image.h"
+#include "cgl/object.h"
+#include "cgl/texture2D.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -18,6 +21,39 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, 1);
 }
 
+struct Image
+{
+    int width;
+    int height;
+    int nrChannels;
+    unsigned char *pixels;
+};
+
+void ImageInit(struct Image *img)
+{
+    img->width = img->height = img->nrChannels = 0;
+    img->pixels = NULL;
+}
+
+int ImageLoad(struct Image *img, const char *path)
+{
+    int err = 0;
+    img->pixels = stbi_load(path, &img->width, &img->height, &img->nrChannels, 0);
+    if (!img->pixels)
+    {
+        err = -1;
+    }
+    return err;
+}
+
+void ImageFree(struct Image *img)
+{
+    if (img->pixels)
+    {
+        stbi_image_free(img->pixels);
+    }
+}
+
 int main()
 {
     struct cgl_shader vertexShader;
@@ -26,6 +62,11 @@ int main()
     struct cgl_vbo vbo;
     struct cgl_ebo ebo;
     struct cgl_vao vao;
+    struct cgl_texture2D smileyTex;
+    struct cgl_texture2D containerTex;
+    struct cgl_image smiley;
+    struct cgl_image container;
+
     int err = 0;
     float vertices[] = {
         // positions          // colors           // texture coords
@@ -49,21 +90,17 @@ int main()
     cgl_shader_init(&fragmentShader);
     cgl_shader_program_init(&shaders);
 
-    // texture 1
-    int imgWidth, imgHeight, nrChannels;
-    unsigned char *imgData = NULL;
+    cgl_image_init(&smiley);
+    cgl_image_init(&container);
 
-    // texture 2
-    int imgWidth2, imgHeight2, nrChannels2;
-    unsigned char *imgData2 = NULL;
-
-    unsigned int textureID;
-    unsigned int texture2ID;
-
-    imgData = stbi_load("deps/img/container.jpg", &imgWidth, &imgHeight, &nrChannels, 0);
-    imgData2 = stbi_load("deps/img/awesomeface.png", &imgWidth2, &imgHeight2, &nrChannels2, 0);
-
-    if (!imgData2)
+    err = cgl_image_load(&smiley, "deps/img/awesomeface.png");
+    if (err)
+    {
+        printf("err\n");
+        return -1;
+    }
+    err = cgl_image_load(&container, "deps/img/container.jpg");
+    if (err)
     {
         return -1;
     }
@@ -120,15 +157,12 @@ int main()
     cgl_buffer_data(cgl_buffer_kind_element, sizeof(indices), indices, cgl_draw_kind_static);
 
     // configure textures
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, (void *)imgData);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    // texture #2
-    glGenTextures(1, &texture2ID);
-    glBindTexture(GL_TEXTURE_2D, texture2ID);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth2, imgHeight2, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)imgData2);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    cgl_texture2D_gen(&containerTex, &container, GL_RGB, GL_RGB);
+    cgl_texture2D_gen(&smileyTex, &smiley, GL_RGB, GL_RGBA);
+
+    // free after giving data to the texture2D
+    cgl_image_free(&smiley);
+    cgl_image_free(&container);
 
     // unbind vao
     cgl_vao_unbind();
@@ -194,9 +228,9 @@ int main()
 
         // binding appropriate textures
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&containerTex));
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2ID);
+        glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&smileyTex));
 
         cgl_vao_bind(&vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -213,7 +247,6 @@ int main()
     cgl_shader_delete(&fragmentShader);
 
     // free resources
-    stbi_image_free(imgData);
     cgl_shader_program_delete(&shaders);
 
     glfwTerminate();

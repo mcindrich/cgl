@@ -18,6 +18,8 @@ set(
     "lib/cgl/vbo.c"
     "lib/cgl/ebo.c"
     "lib/cgl/vao.c"
+    "lib/cgl/texture2D.c"
+    "lib/cgl/image.c"
 )
 
 add_library(

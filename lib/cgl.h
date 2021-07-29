@@ -9,5 +9,7 @@
 #include <cgl/vbo.h>
 #include <cgl/ebo.h>
 #include <cgl/vao.h>
+#include <cgl/texture2D.h>
+#include <cgl/image.h>
 
 #endif // CGL_H
