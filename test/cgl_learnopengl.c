@@ -161,8 +161,8 @@ int main()
     cgl_texture2D_gen(&smileyTex, &smiley, GL_RGB, GL_RGBA);
 
     // free after giving data to the texture2D
-    cgl_image_free(&smiley);
-    cgl_image_free(&container);
+    cgl_image_delete(&smiley);
+    cgl_image_delete(&container);
 
     // unbind vao
     cgl_vao_unbind();
@@ -228,9 +228,11 @@ int main()
 
         // binding appropriate textures
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&containerTex));
+        cgl_texture2D_bind(&containerTex);
+        // glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&containerTex));
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&smileyTex));
+        cgl_texture2D_bind(&smileyTex);
+        // glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)&smileyTex));
 
         cgl_vao_bind(&vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

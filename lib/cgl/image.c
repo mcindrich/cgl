@@ -1,5 +1,5 @@
 #include <cgl/image.h>
-#include <stb_image.h>
+#include <stb/stb_image.h>
 
 /**
  * initializes the helper image struct
@@ -27,7 +27,7 @@ int cgl_image_load(struct cgl_image *img, const char *path)
  * frees the helper image struct
  * @param   img     image struct to free
  */
-void cgl_image_free(struct cgl_image *img)
+void cgl_image_delete(struct cgl_image *img)
 {
     if (img->pix)
     {

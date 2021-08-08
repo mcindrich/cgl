@@ -37,9 +37,18 @@ int cgl_texture2D_gen(struct cgl_texture2D *tex, struct cgl_image *img, unsigned
 }
 
 /**
+ * binds the given texture object to GL_TEXTURE_2D
+ * @param   tex     texture to use
+ */
+void cgl_texture2D_bind(struct cgl_texture2D *tex)
+{
+    glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)tex));
+}
+
+/**
  * frees the given texture
  * @param   tex     texture to free
  */
-void cgl_texture2D_free(struct cgl_texture2D *tex)
+void cgl_texture2D_delete(struct cgl_texture2D *tex)
 {
 }
