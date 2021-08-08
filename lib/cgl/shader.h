@@ -4,29 +4,27 @@
 #include <cgl/object.h>
 #include <cgl/types.h>
 
-enum cgl_shader_kind_e
+enum cgl_shader_kind
 {
     cgl_shader_kind_none = 0,
     cgl_shader_kind_vertex = 0x8B31,
     cgl_shader_kind_fragment = 0x8B30,
     cgl_shader_kind_geometry = 0x8DD9,
 };
-typedef enum cgl_shader_kind_e cgl_shader_kind_t;
 
-enum cgl_shader_flag_e : u8_t
+enum cgl_shader_flag : u8_t
 {
     cgl_shader_flag_initialized = 0x1,
     cgl_shader_flag_compiled = 0x2,
 };
-typedef enum cgl_shader_flag_e cgl_shader_flag_t;
 
 /** shader object */
 struct cgl_shader
 {
-    struct cgl_object obj;   /**< object base for the shader object */
-    cgl_shader_kind_t kind;  /*< kind(type) of a shader */
-    char *src;               /**< shader source code */
-    cgl_shader_flag_t flags; /**< shader flags */
+    struct cgl_object obj;      /**< object base for the shader object */
+    enum cgl_shader_kind kind;  /*< kind(type) of a shader */
+    char *src;                  /**< shader source code */
+    enum cgl_shader_flag flags; /**< shader flags */
 };
 
 /**
@@ -50,7 +48,7 @@ void cgl_shader_init(struct cgl_shader *sh);
  * @param   fpath   path to the file to load
  * @return  error code
  */
-int cgl_shader_load_source(struct cgl_shader *sh, cgl_shader_kind_t kind, const char *fpath);
+int cgl_shader_load_source(struct cgl_shader *sh, enum cgl_shader_kind kind, const char *fpath);
 
 /**
  * compile the given shader object

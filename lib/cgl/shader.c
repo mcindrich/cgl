@@ -45,7 +45,7 @@ void cgl_shader_init(struct cgl_shader *sh)
  * @param   fpath   path to the file to load
  * @return  error code
  */
-int cgl_shader_load_source(struct cgl_shader *sh, cgl_shader_kind_t kind, const char *fpath)
+int cgl_shader_load_source(struct cgl_shader *sh, enum cgl_shader_kind kind, const char *fpath)
 {
     int err = cgl_error_none;
     char *data = NULL;
@@ -59,11 +59,6 @@ int cgl_shader_load_source(struct cgl_shader *sh, cgl_shader_kind_t kind, const 
     sh->src = data;
     sh->kind = kind;
 
-    cgl_object_set_ID((struct cgl_object *)sh, glCreateShader(kind));
-    glShaderSource(cgl_object_get_ID((struct cgl_object *)sh), 1, (const char *const *)&sh->src, NULL);
-
-    cgl_shader_set_flag(sh, cgl_shader_flag_initialized);
-
     return err;
 }
 
@@ -75,6 +70,12 @@ int cgl_shader_load_source(struct cgl_shader *sh, cgl_shader_kind_t kind, const 
 int cgl_shader_compile(struct cgl_shader *sh)
 {
     int err = cgl_error_none;
+
+    cgl_object_set_ID((struct cgl_object *)sh, glCreateShader(sh->kind));
+    glShaderSource(cgl_object_get_ID((struct cgl_object *)sh), 1, (const char *const *)&sh->src, NULL);
+
+    cgl_shader_set_flag(sh, cgl_shader_flag_initialized);
+
     glCompileShader(cgl_object_get_ID((struct cgl_object *)sh));
 
     err = check_compile_status(cgl_object_get_ID((struct cgl_object *)sh));

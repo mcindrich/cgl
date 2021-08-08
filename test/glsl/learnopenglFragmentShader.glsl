@@ -12,8 +12,12 @@ uniform sampler2D texSampler1;
 
 void main()
 {
-    oColor = mix(
-        texture(texSampler0, vertTexCoordinates), 
-        texture(texSampler1, vec2(1 - vertTexCoordinates.x, vertTexCoordinates.y)), cos(time)
-    );
+    // oColor = mix(
+    //     texture(texSampler0, vertTexCoordinates), 
+    //     texture(texSampler1, vec2(1 - vertTexCoordinates.x, vertTexCoordinates.y)), cos(time)
+    // );
+    oColor = texture(texSampler1, vertTexCoordinates);
+    if(oColor.a <= 1) {
+        discard;
+    }
 }

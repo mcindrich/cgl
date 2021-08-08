@@ -105,6 +105,19 @@ int main()
         return -1;
     }
 
+    err = cgl_shader_load_source(&vertexShader, cgl_shader_kind_vertex, "test/glsl/learnopengl/vert.glsl");
+    if (err)
+    {
+        printf("shader load error 1\n");
+        return -1;
+    }
+    err = cgl_shader_load_source(&fragmentShader, cgl_shader_kind_fragment, "test/glsl/learnopengl/frag.glsl");
+    if (err)
+    {
+        printf("shader load error 2\n");
+        return -1;
+    }
+
     // init GLFW window
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -158,7 +171,7 @@ int main()
 
     // configure textures
     cgl_texture2D_gen(&containerTex, &container, GL_RGB, GL_RGB);
-    cgl_texture2D_gen(&smileyTex, &smiley, GL_RGB, GL_RGBA);
+    cgl_texture2D_gen(&smileyTex, &smiley, GL_RGBA, GL_RGBA);
 
     // free after giving data to the texture2D
     cgl_image_delete(&smiley);
@@ -166,19 +179,6 @@ int main()
 
     // unbind vao
     cgl_vao_unbind();
-
-    err = cgl_shader_load_source(&vertexShader, cgl_shader_kind_vertex, "test/glsl/learnopenglVertexShader.glsl");
-    if (err)
-    {
-        printf("shader load error 1\n");
-        return -1;
-    }
-    err = cgl_shader_load_source(&fragmentShader, cgl_shader_kind_fragment, "test/glsl/learnopenglFragmentShader.glsl");
-    if (err)
-    {
-        printf("shader load error 2\n");
-        return -1;
-    }
 
     err = cgl_shader_compile(&vertexShader);
     if (err)
