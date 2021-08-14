@@ -30,9 +30,6 @@ int cgl_texture2D_gen(struct cgl_texture2D *tex, struct cgl_image *img, unsigned
     glTexImage2D(GL_TEXTURE_2D, 0, fmt, img->w, img->h, 0, ifmt, GL_UNSIGNED_BYTE, img->pix);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    // unbind current tex
-    glBindTexture(GL_TEXTURE_2D, 0);
-
     return err;
 }
 
@@ -43,6 +40,14 @@ int cgl_texture2D_gen(struct cgl_texture2D *tex, struct cgl_image *img, unsigned
 void cgl_texture2D_bind(struct cgl_texture2D *tex)
 {
     glBindTexture(GL_TEXTURE_2D, cgl_object_get_ID((struct cgl_object *)tex));
+}
+
+/**
+ * unbinds object bound to GL_TEXTURE_2D
+ */
+void cgl_texture2D_unbind(void)
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 /**
